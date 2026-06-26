@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casten — Cybersecurity for Everyone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #06100e;
+  --bg2: #0a1a16;
+  --teal: #4ecba0;
+  --teal-dim: rgba(78,203,160,0.15);
+  --teal-glow: rgba(78,203,160,0.06);
+  --white: #f0f4f2;
+  --white-dim: rgba(240,244,242,0.55);
+  --white-muted: rgba(240,244,242,0.3);
+  --border: rgba(255,255,255,0.07);
+  --border-teal: rgba(78,203,160,0.2);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── Stars canvas ─────────────────── */
+#stars {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Nav ──────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem 2.5rem;
+}
+
+.nav-logo {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px; font-weight: 500; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--white);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex; gap: 2.5rem; list-style: none;
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.nav-links a {
+  font-size: 12px; letter-spacing: 0.08em;
+  color: var(--white-dim); text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+
+.nav-cta {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--teal);
+  border: 0.5px solid var(--border-teal); border-radius: 3px;
+  padding: 0.45rem 1rem; text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-cta:hover { background: var(--teal-dim); color: var(--teal); }
+
+/* ── Hero ─────────────────────────── */
+.hero {
+  position: relative; z-index: 10;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 0 2rem;
+}
+
+.hero-eyebrow {
+  font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--white-muted);
+  border: 0.5px solid var(--border);
+  padding: 0.35rem 1rem; border-radius: 2px;
+  margin-bottom: 3rem;
+}
+
+.hero h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.5rem, 8vw, 7.5rem);
+  font-weight: 300; line-height: 1.0;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  margin-bottom: 1.75rem;
+  max-width: 14ch;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--teal);
+}
+
+.hero-sub {
+  font-size: 14px; font-weight: 300;
+  line-height: 1.75; letter-spacing: 0.02em;
+  color: var(--white-dim);
+  max-width: 42ch; margin-bottom: 3rem;
+}
+
+.hero-cta {
+  font-size: 11px; font-weight: 400; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--white-dim);
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 0.75rem;
+  transition: color 0.2s;
+}
+.hero-cta:hover { color: var(--white); }
+.hero-cta::after {
+  content: '→'; font-size: 13px;
+  transition: transform 0.2s;
+}
+.hero-cta:hover::after { transform: translateX(4px); }
+
+.hero-scroll {
+  position: absolute; bottom: 2.5rem;
+  font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--white-muted);
+  display: flex; flex-direction: column; align-items: center; gap: 0.75rem;
+}
+.scroll-line {
+  width: 0.5px; height: 40px; background: var(--border);
+  animation: scrollpulse 2s ease-in-out infinite;
+}
+@keyframes scrollpulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(0.6); }
+}
+
+/* ── Stats ────────────────────────── */
+.stats {
+  position: relative; z-index: 10;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border-top: 0.5px solid var(--border);
+  max-width: 1100px; margin: 0 auto;
+}
+
+.stat {
+  padding: 3.5rem 3rem;
+  border-right: 0.5px solid var(--border);
+}
+.stat:last-child { border-right: none; }
+
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3.5rem; font-weight: 300;
+  color: var(--white); line-height: 1; margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
+}
+.stat-label {
+  font-size: 12px; color: var(--white-muted); line-height: 1.6; letter-spacing: 0.02em;
+}
+
+/* ── Section wrapper ──────────────── */
+.section {
+  position: relative; z-index: 10;
+  max-width: 1100px; margin: 0 auto;
+  padding: 7rem 2.5rem;
+  border-top: 0.5px solid var(--border);
+}
+
+.eyebrow {
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--white-muted); margin-bottom: 4rem;
+  display: flex; align-items: center; gap: 1.5rem;
+}
+.eyebrow::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+
+/* ── What we do ───────────────────── */
+.what-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start;
+}
+
+.what-copy h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 300;
+  line-height: 1.15; letter-spacing: -0.01em;
+  color: var(--white); margin-bottom: 1.5rem;
+}
+.what-copy p {
+  font-size: 14px; line-height: 1.8; color: var(--white-dim); letter-spacing: 0.01em;
+}
+
+.feature-list { display: flex; flex-direction: column; gap: 0; }
+.feature-item {
+  display: flex; gap: 1.5rem; align-items: flex-start;
+  padding: 1.5rem 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.feature-item:first-child { border-top: 0.5px solid var(--border); }
+
+.feature-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; color: var(--teal); opacity: 0.6;
+  min-width: 1.5rem; line-height: 1.6;
+}
+.feature-body {}
+.feature-title {
+  font-size: 13px; font-weight: 500; color: var(--white);
+  letter-spacing: 0.04em; margin-bottom: 0.35rem;
+}
+.feature-desc {
+  font-size: 12px; color: var(--white-muted); line-height: 1.65;
+}
+
+/* ── Pillars ──────────────────────── */
+.pillars-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5px; }
+
+.pillar {
+  padding: 3rem 2.5rem;
+  border: 0.5px solid var(--border);
+  position: relative; overflow: hidden;
+  transition: border-color 0.3s;
+}
+.pillar:hover { border-color: var(--border-teal); }
+
+.pillar::before {
+  content: ''; position: absolute;
+  top: -60px; right: -60px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: var(--teal-glow);
+  pointer-events: none;
+}
+
+.pillar-tag {
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--teal); opacity: 0.7; margin-bottom: 1.5rem;
+}
+.pillar h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 300;
+  letter-spacing: -0.01em; color: var(--white);
+  margin-bottom: 0.85rem; line-height: 1.2;
+}
+.pillar p {
+  font-size: 13px; color: var(--white-muted);
+  line-height: 1.75; margin-bottom: 2rem; letter-spacing: 0.01em;
+}
+.pillar-items { display: flex; flex-direction: column; gap: 0.65rem; }
+.pillar-item {
+  font-size: 12px; color: var(--white-muted);
+  display: flex; align-items: flex-start; gap: 0.75rem; line-height: 1.5;
+}
+.pillar-item::before {
+  content: '—'; color: var(--teal); opacity: 0.5; flex-shrink: 0;
+  font-size: 10px; margin-top: 2px;
+}
+
+/* ── Waitlist ─────────────────────── */
+.waitlist-inner {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start;
+}
+
+.waitlist-copy h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 300;
+  line-height: 1.15; letter-spacing: -0.01em;
+  color: var(--white); margin-bottom: 1.25rem;
+}
+.waitlist-copy p {
+  font-size: 14px; color: var(--white-dim); line-height: 1.8;
+}
+
+.waitlist-form { display: flex; flex-direction: column; gap: 1rem; }
+
+.form-label {
+  font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--white-muted); display: block; margin-bottom: 0.4rem;
+}
+
+.form-input, .form-select {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 0.5px solid var(--border);
+  border-radius: 3px; padding: 0.75rem 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 300;
+  color: var(--white); letter-spacing: 0.02em;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input::placeholder { color: var(--white-muted); }
+.form-input:focus, .form-select:focus { border-color: var(--border-teal); }
+.form-select { appearance: none; cursor: pointer; }
+.form-select option { background: #0a1a16; }
+
+.form-submit {
+  width: 100%; padding: 0.85rem;
+  background: var(--teal); color: var(--bg);
+  border: none; border-radius: 3px; cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.16em;
+  text-transform: uppercase; margin-top: 0.5rem;
+  transition: opacity 0.2s;
+}
+.form-submit:hover { opacity: 0.85; }
+
+.form-note {
+  font-size: 11px; color: var(--white-muted);
+  text-align: center; letter-spacing: 0.02em;
+}
+
+.form-success {
+  display: none; text-align: center; padding: 2rem 0;
+}
+.form-success h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 300; color: var(--teal);
+  margin-bottom: 0.75rem;
+}
+.form-success p {
+  font-size: 13px; color: var(--white-muted); line-height: 1.7;
+}
+
+/* ── Footer ───────────────────────── */
+footer {
+  position: relative; z-index: 10;
+  border-top: 0.5px solid var(--border);
+  padding: 2rem 2.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+  max-width: 100%;
+}
+.footer-logo {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--white-muted);
+}
+.footer-copy {
+  font-size: 11px; color: var(--white-muted); letter-spacing: 0.04em;
+}
+
+/* ── Responsive ───────────────────── */
+@media (max-width: 700px) {
+  nav { padding: 1.25rem; }
+  .nav-links, .nav-cta { display: none; }
+  .hero h1 { font-size: 3.2rem; }
+  .stats { grid-template-columns: 1fr; }
+  .stat { border-right: none; border-bottom: 0.5px solid var(--border); padding: 2.5rem 1.5rem; }
+  .section { padding: 5rem 1.25rem; }
+  .what-grid, .pillars-grid, .waitlist-inner { grid-template-columns: 1fr; gap: 3rem; }
+  footer { flex-direction: column; gap: 0.5rem; padding: 2rem 1.25rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-line { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="#">Casten</a>
+  <ul class="nav-links">
+    <li><a href="#what">What we do</a></li>
+    <li><a href="#pillars">Features</a></li>
+    <li><a href="#waitlist">Waitlist</a></li>
+  </ul>
+  <a class="nav-cta" href="#waitlist">Join the waitlist</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow">Cybersecurity Intelligence</div>
+  <h1>Protection that <em>actually</em> makes sense.</h1>
+  <p class="hero-sub">Scan threats, detect deepfakes, and learn to defend yourself — built for real people, not IT departments.</p>
+  <a class="hero-cta" href="#what">Explore Casten</a>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">$10B+</div>
+    <div class="stat-label">lost to online scams in the US last year</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3 in 4</div>
+    <div class="stat-label">adults received a phishing attempt in the past month</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">0</div>
+    <div class="stat-label">consumer tools built to help everyday people fight back</div>
+  </div>
+</div>
+
+<!-- What we do -->
+<div class="section" id="what">
+  <div class="eyebrow">What we do</div>
+  <div class="what-grid">
+    <div class="what-copy">
+      <h2>A defense hub, not a lecture.</h2>
+      <p>Most cybersecurity tools are built for IT teams. Casten is built for your family. Paste a suspicious link, upload a voice memo, check if your email has been breached — and get a plain-English verdict in seconds.</p>
+    </div>
+    <div class="feature-list">
+      <div class="feature-item">
+        <div class="feature-num">01</div>
+        <div class="feature-body">
+          <div class="feature-title">Phishing scanner</div>
+          <div class="feature-desc">Paste any link or message for an instant risk analysis with a clear confidence score.</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-num">02</div>
+        <div class="feature-body">
+          <div class="feature-title">Deepfake detector</div>
+          <div class="feature-desc">Upload a suspicious audio or video clip for acoustic and visual anomaly analysis.</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-num">03</div>
+        <div class="feature-body">
+          <div class="feature-title">Data breach check</div>
+          <div class="feature-desc">See if your email and passwords have been exposed, and exactly what to do next.</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-num">04</div>
+        <div class="feature-body">
+          <div class="feature-title">"Is this company legit?"</div>
+          <div class="feature-desc">WHOIS lookup cross-referenced with consumer complaint databases. Instant red flags.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pillars -->
+<div class="section" id="pillars">
+  <div class="eyebrow">Two pillars</div>
+  <div class="pillars-grid">
+    <div class="pillar">
+      <div class="pillar-tag">01 · PhishShield AI</div>
+      <h3>Tactical defense tools</h3>
+      <p>Real-time analysis for the threats you actually encounter — no technical background required.</p>
+      <div class="pillar-items">
+        <div class="pillar-item">Deepfake audio &amp; video analyzer</div>
+        <div class="pillar-item">Company legitimacy WHOIS lookup</div>
+        <div class="pillar-item">HaveIBeenPwned data breach check</div>
+        <div class="pillar-item">Domain age &amp; complaint database cross-check</div>
+      </div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-tag">02 · Learning Engine</div>
+      <h3>Gamified education</h3>
+      <p>Interactive simulations for all ages — because dry security training has never changed a single behavior.</p>
+      <div class="pillar-items">
+        <div class="pillar-item">"Spot the scam" daily mini-game with streaks</div>
+        <div class="pillar-item">AI hacker chatbot simulator</div>
+        <div class="pillar-item">Senior mode — large text, high contrast, audio</div>
+        <div class="pillar-item">Junior mode — badges, cartoons, gaming scam traps</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Waitlist -->
+<div class="section" id="waitlist">
+  <div class="eyebrow">Early access</div>
+  <div class="waitlist-inner">
+    <div class="waitlist-copy">
+      <h2>Be the first to protect your family.</h2>
+      <p>Casten launches before November. Join the waitlist to get early access, shape the product with your feedback, and lock in tier one — free forever.</p>
+    </div>
+    <div>
+      <div class="form-success" id="form-success">
+        <h3>You're on the list.</h3>
+        <p>We'll reach out with early access details before launch. Keep your eyes on your inbox.</p>
+      </div>
+      <form class="waitlist-form" id="waitlist-form" onsubmit="handleSubmit(event)">
+        <div>
+          <label class="form-label" for="name">Full name</label>
+          <input class="form-input" type="text" id="name" placeholder="Jane Smith" required>
+        </div>
+        <div>
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-input" type="email" id="email" placeholder="jane@example.com" required>
+        </div>
+        <div>
+          <label class="form-label" for="who">Who are you protecting?</label>
+          <select class="form-select" id="who">
+            <option value="">Select one</option>
+            <option>Myself</option>
+            <option>My parents or grandparents</option>
+            <option>My kids or teenagers</option>
+            <option>A small business</option>
+            <option>All of the above</option>
+          </select>
+        </div>
+        <button class="form-submit" type="submit">Reserve my spot</button>
+        <p class="form-note">No spam. No sharing your data. Ever.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <span class="footer-logo">Casten</span>
+  <span class="footer-copy">© 2025 Casten. Cybersecurity for everyone.</span>
+</footer>
+
+<script>
+// Stars
+(function() {
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  const N = 180;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function init() {
+    resize();
+    stars = [];
+    for (let i = 0; i < N; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 0.9 + 0.2,
+        o: Math.random() * 0.5 + 0.1,
+        speed: Math.random() * 0.003 + 0.001,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => {
+      const opacity = s.o * (0.6 + 0.4 * Math.sin(t * s.speed * 1000 + s.phase));
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(200, 230, 218, ${opacity})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+
+  init();
+  window.addEventListener('resize', init);
+  requestAnimationFrame(draw);
+})();
+
+function handleSubmit(e) {
+  e.preventDefault();
+  document.getElementById('waitlist-form').style.display = 'none';
+  document.getElementById('form-success').style.display = 'block';
+}
+</script>
+</body>
+</html>
