@@ -515,41 +515,258 @@ footer {
   </div>
 </div>
 
+<!-- What we do --><style>
+.what-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 3.5rem;
+  align-items: start;
+}
+
+.what-copy {
+  position: sticky;
+  top: 6rem;
+}
+
+.what-copy h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  margin-bottom: 1.25rem;
+}
+
+.what-copy p {
+  max-width: 30rem;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--white-dim);
+  letter-spacing: 0.01em;
+}
+
+.what-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 2rem;
+}
+
+.what-tag {
+  border: 0.5px solid var(--border);
+  color: var(--white-muted);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.75rem;
+  background: rgba(255,255,255,0.025);
+}
+
+.what-proof {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5px;
+  margin-top: 2rem;
+  border: 0.5px solid var(--border);
+}
+
+.what-proof-item {
+  padding: 1.2rem;
+  background: rgba(255,255,255,0.02);
+}
+
+.what-proof-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--teal);
+  margin-bottom: 0.4rem;
+}
+
+.what-proof-label {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--white-muted);
+}
+
+.feature-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.feature-item {
+  min-height: 13rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.75rem;
+  padding: 1.35rem;
+  border: 0.5px solid var(--border);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012)),
+    rgba(255,255,255,0.015);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.feature-item::after {
+  content: '';
+  position: absolute;
+  inset: auto -35% -45% auto;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+  background: var(--teal-glow);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.feature-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-teal);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.018)),
+    rgba(255,255,255,0.02);
+}
+
+.feature-item:hover::after {
+  opacity: 1;
+}
+
+.feature-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.feature-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--teal);
+  opacity: 0.7;
+  line-height: 1;
+}
+
+.feature-icon {
+  width: 2.4rem;
+  height: 2.4rem;
+  display: grid;
+  place-items: center;
+  border: 0.5px solid var(--border);
+  color: var(--teal);
+  background: rgba(255,255,255,0.035);
+}
+
+.feature-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--white);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.55rem;
+}
+
+.feature-desc {
+  font-size: 12px;
+  color: var(--white-muted);
+  line-height: 1.75;
+}
+
+@media (max-width: 700px) {
+  .what-copy {
+    position: static;
+  }
+
+  .feature-list {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-item {
+    min-height: auto;
+  }
+}
+</style>
+
 <!-- What we do -->
 <div class="section" id="what">
   <div class="eyebrow">What we do</div>
   <div class="what-grid">
     <div class="what-copy">
-      <h2>A defense hub, not a lecture.</h2>
-      <p>Most cybersecurity tools are built for IT teams. Casten is built for your family. Paste a suspicious link, upload a voice memo, check if your email has been breached — and get a plain-English verdict in seconds.</p>
+      <h2>Scam defense that feels easy to use.</h2>
+      <p>Casten turns confusing digital threats into simple next steps. Scan a sketchy message, check a suspicious voice clip, see whether your data has leaked, and know what to do without needing to speak cybersecurity.</p>
+
+      <div class="what-tags">
+        <span class="what-tag">Fast checks</span>
+        <span class="what-tag">Plain English</span>
+        <span class="what-tag">Family ready</span>
+      </div>
+
+      <div class="what-proof">
+        <div class="what-proof-item">
+          <div class="what-proof-num">4</div>
+          <div class="what-proof-label">core tools for everyday scam protection</div>
+        </div>
+        <div class="what-proof-item">
+          <div class="what-proof-num">1</div>
+          <div class="what-proof-label">shared place to check, learn, and respond</div>
+        </div>
+      </div>
     </div>
+
     <div class="feature-list">
       <div class="feature-item">
-        <div class="feature-num">01</div>
+        <div class="feature-top">
+          <div class="feature-num">01</div>
+          <div class="feature-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 4h16v12H5.5L4 18V4z"/><path d="m8 9 2.2 2.2L16 6"/></svg>
+          </div>
+        </div>
         <div class="feature-body">
-          <div class="feature-title">Phishing scanner</div>
-          <div class="feature-desc">Paste any link or message for an instant risk analysis with a clear confidence score.</div>
+          <div class="feature-title">Message and link scanner</div>
+          <div class="feature-desc">Paste a text, email, DM, or URL and get a clear risk readout with the warning signs called out.</div>
         </div>
       </div>
+
       <div class="feature-item">
-        <div class="feature-num">02</div>
+        <div class="feature-top">
+          <div class="feature-num">02</div>
+          <div class="feature-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3v18"/><path d="M8 7v10"/><path d="M4 10v4"/><path d="M16 6v12"/><path d="M20 9v6"/></svg>
+          </div>
+        </div>
         <div class="feature-body">
-          <div class="feature-title">Deepfake detector</div>
-          <div class="feature-desc">Upload a suspicious audio or video clip for acoustic and visual anomaly analysis.</div>
+          <div class="feature-title">Voice and deepfake check</div>
+          <div class="feature-desc">Upload suspicious audio or video to spot signs of impersonation before anyone sends money or information.</div>
         </div>
       </div>
+
       <div class="feature-item">
-        <div class="feature-num">03</div>
+        <div class="feature-top">
+          <div class="feature-num">03</div>
+          <div class="feature-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3z"/><path d="M9 12h6"/><path d="M12 9v6"/></svg>
+          </div>
+        </div>
         <div class="feature-body">
           <div class="feature-title">Data breach check</div>
-          <div class="feature-desc">See if your email and passwords have been exposed, and exactly what to do next.</div>
+          <div class="feature-desc">See whether an email or password has been exposed, then get a simple recovery plan.</div>
         </div>
       </div>
+
       <div class="feature-item">
-        <div class="feature-num">04</div>
+        <div class="feature-top">
+          <div class="feature-num">04</div>
+          <div class="feature-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/><path d="M8.5 11h5"/><path d="M11 8.5v5"/></svg>
+          </div>
+        </div>
         <div class="feature-body">
-          <div class="feature-title">"Is this company legit?"</div>
-          <div class="feature-desc">WHOIS lookup cross-referenced with consumer complaint databases. Instant red flags.</div>
+          <div class="feature-title">Company legitimacy check</div>
+          <div class="feature-desc">Look up a business, domain, or offer and see the trust signals, red flags, and next best move.</div>
         </div>
       </div>
     </div>
