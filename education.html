@@ -652,7 +652,7 @@ let glossaryShown=8;
 function renderGlossary(){
   const grid=document.getElementById('glossary-grid');grid.innerHTML='';
   GLOSSARY.slice(0,glossaryShown).forEach(g=>{
-    grid.innerHTML+=`<div class="glossary-item fade-up"><div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:0.4rem;letter-spacing:0.04em;">${g.term}</div><div style="font-size:12px;color:var(--white-muted);line-height:1.65;">${g.def}</div></div>`;
+    grid.innerHTML+=`<div class="glossary-item"><div style="font-size:12px;font-weight:600;color:var(--white);margin-bottom:0.4rem;letter-spacing:0.04em;">${g.term}</div><div style="font-size:12px;color:var(--white-muted);line-height:1.65;">${g.def}</div></div>`;
   });
   document.getElementById('glossary-more-btn').style.display=glossaryShown>=GLOSSARY.length?'none':'';
 }
@@ -675,7 +675,7 @@ if(checkState.length!==CHECKLIST_ITEMS.length)checkState=CHECKLIST_ITEMS.map(()=
 function renderChecklist(){
   const container=document.getElementById('checklist-items');container.innerHTML='';
   CHECKLIST_ITEMS.forEach((item,i)=>{
-    container.innerHTML+=`<div class="checklist-item fade-up ${checkState[i]?'done':''}" onclick="toggleCheck(${i})">
+    container.innerHTML+=`<div class="checklist-item ${checkState[i]?'done':''}" onclick="toggleCheck(${i})">
       <div class="check-circle">${checkState[i]?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#06100e" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>':''}</div>
       <div style="font-size:13px;color:var(--white);line-height:1.5;${checkState[i]?'opacity:0.6;text-decoration:line-through;text-decoration-color:var(--teal)':''}">${item}</div>
     </div>`;
