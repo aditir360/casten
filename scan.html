@@ -323,6 +323,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>{
   });
 });
 </script>
+
+<script type="module">
+import { supabase } from './js/casten-auth.js';
+
+window.supabase = supabase;
+</script>
+  
 <script>
 const EXAMPLES = [
   "URGENT: Your Chase account has been limited. Verify your identity now to avoid closure: https://chase-secure-verify.net/login",
@@ -339,7 +346,108 @@ const FLAGS = [
   {p:/irs|federal|government|warrant|arrest/i, l:"Government impersonation", d:"Agencies communicate by mail, not unsolicited calls."},
   {p:/amazon|paypal|microsoft|apple|chase|bank of america/i, l:"Brand impersonation", d:"Check the sender domain — it won't match the real company."},
 ];
-function runScan(){
+
+// ================================
+// CASTEN FREE TRIAL SYSTEM
+// ================================
+
+async function checkScanAccess(){
+
+  // Check if user is logged in
+  try {
+    const { data } = await supabase.auth.getSession();
+
+    if(data.session){
+      return true; // unlimited for accounts
+    }
+
+  } catch(e){
+    console.log("Auth check skipped");
+  }
+
+
+  // Anonymous trial check
+  const used = localStorage.getItem("casten_trial_used");
+
+  if(!used){
+    localStorage.setItem(
+      "casten_trial_used",
+      "true"
+    );
+
+    return true;
+  }
+
+
+  showSignupPopup();
+  return false;
+}
+
+
+// Signup popup
+function showSignupPopup(){
+
+  const popup = document.createElement("div");
+
+  popup.innerHTML = `
+  <div style="
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+  ">
+
+    <div style="
+      background:#111827;
+      border:1px solid rgba(255,255,255,.1);
+      padding:2rem;
+      border-radius:12px;
+      max-width:420px;
+      text-align:center;
+    ">
+
+      <h2 style="color:white;margin-bottom:1rem;">
+        Protect yourself with CASTEN
+      </h2>
+
+      <p style="color:#aaa;line-height:1.5;">
+        You've used your free scan.
+        Create a free account to keep scanning,
+        save your results, and build your security history.
+      </p>
+
+      <a href="signup.html">
+        <button style="
+          margin-top:1rem;
+          padding:.8rem 2rem;
+          border-radius:8px;
+          border:none;
+          cursor:pointer;
+        ">
+          Create Free Account
+        </button>
+      </a>
+
+    </div>
+
+  </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+  
+async function runScan(){
+
+  const allowed = await checkScanAccess();
+
+  if(!allowed){
+    return;
+  }
+
+
   const text=document.getElementById('scan-input').value.trim();
   if(!text){alert('Please paste some content first.');return;}
   document.getElementById('scan-result').style.display='none';
