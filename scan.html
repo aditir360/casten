@@ -337,15 +337,6 @@ const EXAMPLES = [
   "Hi Mom it's me. I'm in trouble. Buy $300 in Google Play gift cards and send me the codes. Don't call.",
   "IRS NOTICE: You owe $2,847. A federal warrant will be issued in 24 hours. Call 1-800-555-0199 now.",
 ];
-const FLAGS = [
-  {p:/urgent|immediately|expires?|limited|24 hours?/i, l:"Urgency language", d:"Designed to make you act without thinking."},
-  {p:/verify|confirm|validate|update your/i, l:"Account verification request", d:"Phishing sites mimic login pages to steal credentials."},
-  {p:/bit\.ly|tinyurl|goo\.gl|secure-verify|amaz0n|micros0ft/i, l:"Suspicious link", d:"URL shortened or uses a lookalike domain."},
-  {p:/gift card|wire transfer|bitcoin|crypto|zelle/i, l:"Unusual payment request", d:"Legitimate organisations never ask for gift cards."},
-  {p:/password|ssn|social security|credit card|card number/i, l:"Credential request", d:"No legitimate service asks for credentials via message."},
-  {p:/irs|federal|government|warrant|arrest/i, l:"Government impersonation", d:"Agencies communicate by mail, not unsolicited calls."},
-  {p:/amazon|paypal|microsoft|apple|chase|bank of america/i, l:"Brand impersonation", d:"Check the sender domain — it won't match the real company."},
-];
 
 // ================================
 // CASTEN FREE TRIAL SYSTEM
@@ -438,7 +429,7 @@ function showSignupPopup(){
 
   document.body.appendChild(popup);
 }
-  
+
 async function runScan(){
 
   const allowed = await checkScanAccess();
@@ -447,39 +438,92 @@ async function runScan(){
     return;
   }
 
-
   const text=document.getElementById('scan-input').value.trim();
   if(!text){alert('Please paste some content first.');return;}
+
   document.getElementById('scan-result').style.display='none';
+  document.getElementById('scan-error') && (document.getElementById('scan-error').style.display='none');
   document.getElementById('scan-loading').style.display='block';
-  setTimeout(()=>{document.getElementById('scan-loading').style.display='none';showResult(text);},1400);
+
+  try {
+    const { data, error } = await supabase.functions.invoke('analyze-message', {
+      body: { text },
+    });
+
+    document.getElementById('scan-loading').style.display='none';
+
+    if (error || data?.error) {
+      showScanError(error?.message || data?.error || 'Something went wrong analyzing that.');
+      return;
+    }
+
+    showResult(data);
+  } catch (err) {
+    document.getElementById('scan-loading').style.display='none';
+    showScanError(err.message || 'Could not reach the analyzer. Check your connection and try again.');
+  }
 }
+
+function showScanError(message){
+  let box = document.getElementById('scan-error');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'scan-error';
+    box.className = 'card fade-up visible';
+    box.style.cssText = 'padding:1.5rem;margin-top:1.5rem;border-color:rgba(239,68,68,0.4);background:rgba(239,68,68,0.06);';
+    document.getElementById('scan-result').insertAdjacentElement('afterend', box);
+  }
+  box.style.display = 'block';
+  box.innerHTML = `<div style="font-size:13px;color:#ef4444;font-weight:500;margin-bottom:0.35rem;">Scan failed</div><div style="font-size:12px;color:var(--white-muted);">${message}</div>`;
+}
+
 function loadExample(){
   document.getElementById('scan-input').value=EXAMPLES[Math.floor(Math.random()*EXAMPLES.length)];
 }
-function showResult(text){
-  const hits=FLAGS.filter(f=>f.p.test(text));
-  const score=Math.min(95,hits.length*22+(hits.length>0?15:3));
-  const high=score>=60,med=score>=30&&score<60;
-  document.getElementById('result-title').textContent=high?'High risk detected':med?'Possible risk':'Looks clean';
-  const b=document.getElementById('result-badge');
-  b.textContent=high?'Likely scam':med?'Caution':'Low risk';
-  b.className='badge '+(high?'badge-red':med?'badge-yellow':'');
-  const fill=document.getElementById('risk-fill');
-  fill.style.width=score+'%';fill.style.background=high?'#ef4444':med?'#f59e0b':'var(--teal)';
-  document.getElementById('risk-score').textContent=score+'% risk score';
-  const fe=document.getElementById('result-flags');fe.innerHTML='';
-  if(hits.length===0){
-    fe.innerHTML='<div class="flag-item"><div class="flag-dot" style="background:var(--teal)"></div><div><div style="font-size:13px;font-weight:500;color:var(--white);margin-bottom:0.2rem;">No obvious red flags</div><div style="font-size:12px;color:var(--white-muted)">Still be cautious — sophisticated scams are hard to spot.</div></div></div>';
-  } else {
-    hits.forEach(h=>{fe.innerHTML+=`<div class="flag-item"><div class="flag-dot" style="background:#ef4444"></div><div><div style="font-size:13px;font-weight:500;color:var(--white);margin-bottom:0.2rem;">${h.l}</div><div style="font-size:12px;color:var(--white-muted)">${h.d}</div></div></div>`;});
+
+function showResult(result){
+  const score = result.risk_score ?? 0;
+  const high = score >= 60, med = score >= 30 && score < 60;
+
+  document.getElementById('result-title').textContent = result.threat_type && result.threat_type !== 'None detected'
+    ? result.threat_type
+    : (high ? 'High risk detected' : med ? 'Possible risk' : 'Looks clean');
+
+  const b = document.getElementById('result-badge');
+  b.textContent = high ? 'Likely scam' : med ? 'Caution' : 'Low risk';
+  b.className = 'badge ' + (high ? 'badge-red' : med ? 'badge-yellow' : '');
+
+  const fill = document.getElementById('risk-fill');
+  fill.style.width = score + '%';
+  fill.style.background = high ? '#ef4444' : med ? '#f59e0b' : 'var(--teal)';
+  document.getElementById('risk-score').textContent = score + '% risk score';
+
+  const fe = document.getElementById('result-flags');
+  fe.innerHTML = '';
+
+  if (result.summary) {
+    fe.innerHTML += `<div class="flag-item"><div class="flag-dot" style="background:${high?'#ef4444':med?'#f59e0b':'var(--teal)'}"></div><div><div style="font-size:13px;font-weight:500;color:var(--white);margin-bottom:0.2rem;">${result.summary}</div>${result.confidence!=null?`<div style="font-size:11px;color:var(--white-muted)">Confidence: ${result.confidence}%</div>`:''}</div></div>`;
   }
-  document.getElementById('result-action').textContent=high
-    ?"Do not click any links or share personal information. Delete this message immediately. Report it to the real organisation through their official website."
-    :med?"Proceed with caution. Verify the sender through official channels before taking any action."
-    :"This message appears low-risk, but always verify unexpected requests through official contact methods.";
-  const r=document.getElementById('scan-result');r.style.display='block';r.classList.remove('visible');
-  setTimeout(()=>r.classList.add('visible'),50);
+
+  const flags = Array.isArray(result.red_flags) ? result.red_flags : [];
+  if (flags.length === 0 && !result.summary) {
+    fe.innerHTML = '<div class="flag-item"><div class="flag-dot" style="background:var(--teal)"></div><div><div style="font-size:13px;font-weight:500;color:var(--white);margin-bottom:0.2rem;">No obvious red flags</div><div style="font-size:12px;color:var(--white-muted)">Still be cautious — sophisticated scams are hard to spot.</div></div></div>';
+  } else {
+    flags.forEach(f => {
+      fe.innerHTML += `<div class="flag-item"><div class="flag-dot" style="background:#ef4444"></div><div><div style="font-size:13px;font-weight:500;color:var(--white);">${f}</div></div></div>`;
+    });
+  }
+
+  document.getElementById('result-action').textContent = result.recommended_action ||
+    (high
+      ? "Do not click any links or share personal information. Delete this message immediately. Report it to the real organisation through their official website."
+      : med ? "Proceed with caution. Verify the sender through official channels before taking any action."
+      : "This message appears low-risk, but always verify unexpected requests through official contact methods.");
+
+  const r = document.getElementById('scan-result');
+  r.style.display = 'block';
+  r.classList.remove('visible');
+  setTimeout(() => r.classList.add('visible'), 50);
 }
 </script>
 
